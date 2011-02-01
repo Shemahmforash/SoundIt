@@ -301,7 +301,7 @@ public class mainFrame extends javax.swing.JFrame {
 
             if (!file.exists()) {
                 try {
-                    
+
                     file.createNewFile();
                     System.out.println("New file " + file.getAbsolutePath() + " has been created to the current directory");
                 } catch (IOException ex) {
@@ -311,7 +311,7 @@ public class mainFrame extends javax.swing.JFrame {
 
             System.out.println("Faço save de " + file.getAbsolutePath());
 
-            try {
+            /*try {
                 FileOutputStream fos = new FileOutputStream(file.getAbsolutePath());
                 ObjectOutputStream oos = new ObjectOutputStream(fos);
                 oos.writeObject(contents);
@@ -321,7 +321,12 @@ public class mainFrame extends javax.swing.JFrame {
                 e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
-            }
+            }*/
+
+            SaveProjectTask saveProjectTask = new SaveProjectTask(file);
+            saveProjectTask.execute();
+
+            //JOptionPane.showMessageDialog(this, "The contents of this project were saved successfully to " + file.getName());
 
         } else {
         }
@@ -408,19 +413,24 @@ public class mainFrame extends javax.swing.JFrame {
                         //TODO: pedir confirmação ao user e apagar o existente
                     } else {
 
-                        FileInputStream fis = new FileInputStream(file.getAbsolutePath());
+                        /*FileInputStream fis = new FileInputStream(file.getAbsolutePath());
 
                         ObjectInputStream ois = new ObjectInputStream(fis);
 
                         Object obj = ois.readObject();
 
-                        contents =  (ArrayList<AnalysisContent>) obj;
+                        contents = (ArrayList<AnalysisContent>) obj;
 
                         for (AnalysisContent content : contents) {
-                            jComboBox1.addItem(content.getFile().getName());
-                        }
+                        jComboBox1.addItem(content.getFile().getName());
+                        }*/
 
-                        JOptionPane.showMessageDialog(this, "Project imported successfully from " + file.getName());
+                        //I'll open a project from the file
+                        OpenProjectTask openTask = new OpenProjectTask(file);
+                        openTask.execute();
+
+
+                        
 
                     }
 
@@ -431,7 +441,6 @@ public class mainFrame extends javax.swing.JFrame {
             e.printStackTrace();
         }
     }//GEN-LAST:event_jMenuItemOpenProjectActionPerformed
-
     /**
      * Updates the progressMonitor
      */
@@ -458,6 +467,62 @@ public class mainFrame extends javax.swing.JFrame {
             }
         }
     };
+
+    class SaveProjectTask extends SwingWorker<Void, Void> {
+
+        private File file;
+
+        @Override
+        protected Void doInBackground() throws Exception {
+            try {
+                FileOutputStream fos = new FileOutputStream(file.getAbsolutePath());
+                ObjectOutputStream oos = new ObjectOutputStream(fos);
+                oos.writeObject(contents);
+                
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            JOptionPane.showMessageDialog(mainFrame.this, "Project imported successfully from " + file.getName());
+
+            return null;
+        }
+
+        public SaveProjectTask(File file) {
+            this.file = file;
+        }
+        
+    }
+
+    class OpenProjectTask extends SwingWorker<Void, Void> {
+
+        private File file;
+
+        private OpenProjectTask(File file) {
+            this.file = file;
+        }
+
+        @Override
+        protected Void doInBackground() throws Exception {
+            FileInputStream fis = new FileInputStream(file.getAbsolutePath());
+
+            ObjectInputStream ois = new ObjectInputStream(fis);
+
+            Object obj = ois.readObject();
+
+            contents = (ArrayList<AnalysisContent>) obj;
+
+            for (AnalysisContent content : contents) {
+                jComboBox1.addItem(content.getFile().getName());
+            }
+
+            JOptionPane.showMessageDialog(mainFrame.this, "Project imported successfully from " + file.getName());
+
+            return null;
+        }
+    }
 
     /**
      * This task is responsible for importing the data from an audio file into the attributes of an object
