@@ -61,7 +61,7 @@ public class mainFrame extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jDialog1 = new javax.swing.JDialog();
+        jDialogAbout = new javax.swing.JDialog();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jButtonClose = new javax.swing.JButton();
@@ -87,14 +87,14 @@ public class mainFrame extends javax.swing.JFrame {
         jMenuItemHelp = new javax.swing.JMenuItem();
         jMenuItemAbout = new javax.swing.JMenuItem();
 
-        jDialog1.setTitle("About SoundIT");
+        jDialogAbout.setTitle("About SoundIT");
 
         jLabel1.setFont(new java.awt.Font("DejaVu Sans", 1, 18));
         jLabel1.setText("About SoundIT");
 
-        jLabel2.setFont(new java.awt.Font("DejaVu Sans", 0, 12));
+        jLabel2.setFont(new java.awt.Font("DejaVu Sans", 0, 12)); // NOI18N
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jLabel2.setText("<html>SoundIT is a program built using the java programming language and intended to provide several functions related to audio.<br/> It allows one to process the text data from different Soundmeters (NA27).<br/> It also allows one to read and process data from audio files (.wav and .mp3). From this streams, it can plot the values in the time domain (amplitude vs time), but it can also find and plot onsets in the audio, by using the Fourier Transform and other processing methods in the frequency domain. <br/><br/>  More info at http://icdif.com/computing/soundit");
+        jLabel2.setText("<html>SoundIT is a program built using the java programming language and intended to provide several functions related to audio.<br/> It allows one to process the text data from different Soundmeters (NA27).<br/> It also allows one to read and process data from audio files (.wav and .mp3). From this streams, it can plot the values in the time domain (amplitude vs time), but it can also find and plot onsets in the audio, by using the Fourier Transform and other processing methods in the frequency domain. <br/><br/>  More info at:<br/> http://icdif.com/computing/soundit <br/> and<br/>https://github.com/Shemahmforash/SoundIt");
         jLabel2.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
         jButtonClose.setText("Close");
@@ -104,25 +104,25 @@ public class mainFrame extends javax.swing.JFrame {
             }
         });
 
-        javax.swing.GroupLayout jDialog1Layout = new javax.swing.GroupLayout(jDialog1.getContentPane());
-        jDialog1.getContentPane().setLayout(jDialog1Layout);
-        jDialog1Layout.setHorizontalGroup(
-            jDialog1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jDialog1Layout.createSequentialGroup()
-                .addGroup(jDialog1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jDialog1Layout.createSequentialGroup()
+        javax.swing.GroupLayout jDialogAboutLayout = new javax.swing.GroupLayout(jDialogAbout.getContentPane());
+        jDialogAbout.getContentPane().setLayout(jDialogAboutLayout);
+        jDialogAboutLayout.setHorizontalGroup(
+            jDialogAboutLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jDialogAboutLayout.createSequentialGroup()
+                .addGroup(jDialogAboutLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jDialogAboutLayout.createSequentialGroup()
                         .addGap(24, 24, 24)
-                        .addGroup(jDialog1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jDialogAboutLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 456, Short.MAX_VALUE)
                             .addComponent(jLabel1)))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jDialog1Layout.createSequentialGroup()
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jDialogAboutLayout.createSequentialGroup()
                         .addContainerGap(433, Short.MAX_VALUE)
                         .addComponent(jButtonClose)))
                 .addContainerGap())
         );
-        jDialog1Layout.setVerticalGroup(
-            jDialog1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jDialog1Layout.createSequentialGroup()
+        jDialogAboutLayout.setVerticalGroup(
+            jDialogAboutLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jDialogAboutLayout.createSequentialGroup()
                 .addGap(22, 22, 22)
                 .addComponent(jLabel1)
                 .addGap(18, 18, 18)
@@ -286,7 +286,7 @@ public class mainFrame extends javax.swing.JFrame {
                     jComboBox1.addItem(file.getName());
 
                     progressMonitor = new ProgressMonitor(this,
-                            "Running a Long Task",
+                            "Importing " + file.getName(),
                             "", 0, 100);
                     progressMonitor.setProgress(0);
 
@@ -315,77 +315,81 @@ public class mainFrame extends javax.swing.JFrame {
      */
     private void jMenuItemSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemSaveActionPerformed
 
-        jFileChooserProject.setFileFilter(filterProject);
+        if (contents.size() > 0) {
+            jFileChooserProject.setFileFilter(filterProject);
 
-        int returnVal = jFileChooserProject.showSaveDialog(this);
-        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-        if (returnVal == jFileChooserProject.APPROVE_OPTION) {
-            File file = jFileChooserProject.getSelectedFile();
+            int returnVal = jFileChooserProject.showSaveDialog(this);
+            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+            if (returnVal == jFileChooserProject.APPROVE_OPTION) {
+                File file = jFileChooserProject.getSelectedFile();
 
-            if (!file.exists()) {
-                try {
+                if (!file.exists()) {
+                    try {
 
-                    file.createNewFile();
-                    System.out.println("New file " + file.getAbsolutePath() + " has been created to the current directory");
-                } catch (IOException ex) {
-                    Logger.getLogger(mainFrame.class.getName()).log(Level.SEVERE, null, ex);
+                        file.createNewFile();
+                        System.out.println("New file " + file.getAbsolutePath() + " has been created to the current directory");
+                    } catch (IOException ex) {
+                        Logger.getLogger(mainFrame.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 }
+
+                System.out.println("Faço save de " + file.getAbsolutePath());
+
+                /*try {
+                FileOutputStream fos = new FileOutputStream(file.getAbsolutePath());
+                ObjectOutputStream oos = new ObjectOutputStream(fos);
+                oos.writeObject(contents);
+
+                JOptionPane.showMessageDialog(this, "The contents of this project were saved successfully to " + file.getName());
+                } catch (FileNotFoundException e) {
+                e.printStackTrace();
+                } catch (IOException e) {
+                e.printStackTrace();
+                }*/
+
+                SaveProjectTask saveProjectTask = new SaveProjectTask(file);
+                saveProjectTask.execute();
+
+                //JOptionPane.showMessageDialog(this, "The contents of this project were saved successfully to " + file.getName());
+
             }
 
-            System.out.println("Faço save de " + file.getAbsolutePath());
-
-            /*try {
-            FileOutputStream fos = new FileOutputStream(file.getAbsolutePath());
-            ObjectOutputStream oos = new ObjectOutputStream(fos);
-            oos.writeObject(contents);
-
-            JOptionPane.showMessageDialog(this, "The contents of this project were saved successfully to " + file.getName());
-            } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            } catch (IOException e) {
-            e.printStackTrace();
-            }*/
-
-            SaveProjectTask saveProjectTask = new SaveProjectTask(file);
-            saveProjectTask.execute();
-
-            //JOptionPane.showMessageDialog(this, "The contents of this project were saved successfully to " + file.getName());
-
+            setCursor(null); //turn off the wait cursor
         } else {
+            JOptionPane.showMessageDialog(this, "You can't save an empty project. First you must import audio.", "No File Chosen", JOptionPane.WARNING_MESSAGE);
         }
 
-        setCursor(null); //turn off the wait cursor
 
     }//GEN-LAST:event_jMenuItemSaveActionPerformed
 
+    /**
+     * In response to a click in the menu, it open the AboutBox dialog
+     * @param evt
+     */
     private void jMenuItemAboutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemAboutActionPerformed
-        jDialog1.setBounds(0, 0, 400, 400);
-        jDialog1.setVisible(true);
+        jDialogAbout.setBounds(0, 0, 400, 400);
+        jDialogAbout.setVisible(true);
 
     }//GEN-LAST:event_jMenuItemAboutActionPerformed
 
+    /**
+     * In response to the close button in the AboutBox Dialog, it closes the AboutBox
+     * @param evt
+     */
     private void jButtonCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCloseActionPerformed
-        jDialog1.dispose();
+        jDialogAbout.dispose();
     }//GEN-LAST:event_jButtonCloseActionPerformed
 
     /**
-     * This method plots the samplies in the file selected in the combobox.
-     * This samples are too big to be save in the program, so they are read from the file 
+     * This method plots the samples in the file selected in the combobox.
+     * This samples are too big to be saved in the program, so they are read from the file
      * @param evt
      */
     private void jButtonPlotActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonPlotActionPerformed
         //jButtonPlot.setEnabled(false);
 
 
-        if (jComboBox1.getSelectedIndex() >= 0) {
-            progressMonitor = new ProgressMonitor(this,
-                    "Running a Long Task",
-                    "", 0, 100);
-            progressMonitor.setProgress(0);
-
-            progressMonitor.setNote("Plotting");
-
-            System.out.println("Invoquei o prog monitor");
+        if (jComboBox1.getSelectedIndex() >= 0) {            
 
             // find the selected index of the comboBox. Since the combobox is filled
             // at the same order as the contents array list, the indexes are the same
@@ -394,6 +398,15 @@ public class mainFrame extends javax.swing.JFrame {
             String fileName = contents.get(selectedIndex).getFile().getAbsolutePath();
 
             String extension = FileUtils.getExtension(fileName);
+
+            progressMonitor = new ProgressMonitor(this,
+                    "Plotting " + contents.get(selectedIndex).getFile().getName(),
+                    "", 0, 100);
+            progressMonitor.setProgress(0);
+
+            progressMonitor.setNote("Plotting");
+
+            System.out.println("Invoquei o prog monitor");
 
             //System.out.println("Extension = " + extension);
 
@@ -419,17 +432,15 @@ public class mainFrame extends javax.swing.JFrame {
             //we create new instances as needed.
             plotTask = new PlotTask(samplesFile, "PCM DATA - " + fileName, 800, 600, WINDOWSIZE_DEFAULT, Color.RED, fileName, true);
 
-            plotTask.addPropertyChangeListener(this.propertyChangeListenerImport);
+            plotTask.addPropertyChangeListener(this.propertyChangeListenerPlot);
             plotTask.execute();
 
             //I clean the variables
             decoder = null;
             //samplesFile.clear();
-        }
-        else if(contents.size() > 0) {
+        } else if (contents.size() > 0) {
             JOptionPane.showMessageDialog(this, "You need to choose the file to plot from the Combo Box", "No File Chosen", JOptionPane.WARNING_MESSAGE);
-        }
-        else if(contents.size() == 0) {
+        } else if (contents.size() == 0) {
             JOptionPane.showMessageDialog(this, "In order to plot, you first need to import audio to the programa", "You need to import audio first", JOptionPane.WARNING_MESSAGE);
         }
 
@@ -514,26 +525,25 @@ public class mainFrame extends javax.swing.JFrame {
             }
 
             /*SpectralDifference spectDiff = new SpectralDifference(decoder, WINDOWSIZE_DEFAULT,
-                    HOPSIZE_DEFAULT, true, 44100);
+            HOPSIZE_DEFAULT, true, 44100);
 
             //Instances of javax.swing.SwingWorker are not reusuable, so
             //we create new instances as needed.
             plotTask = new PlotTask(spectDiff.getSpectralDifference(), "Spectral Dif - " + fileName, 800, 600, 1, Color.RED, fileName, true, HOPSIZE_DEFAULT);*/
 
 
-            plotTask = new PlotTask(contents.get(selectedIndex).getSpectralFlux(), "Spectral Dif - " + fileName, 800, 600, 1, Color.RED, fileName, true, HOPSIZE_DEFAULT);
-            plotTask.addPropertyChangeListener(this.propertyChangeListenerImport);
+            //plotTask = new PlotTask(contents.get(selectedIndex).getSpectralFlux(), "Spectral Dif - " + fileName, 800, 600, 1, Color.RED, fileName, true, HOPSIZE_DEFAULT);
+            plotTask = new PlotTask(contents.get(selectedIndex).getPeaks(), "Peaks - " + fileName, 800, 600, 1, Color.RED, fileName, true, HOPSIZE_DEFAULT);
+            plotTask.addPropertyChangeListener(this.propertyChangeListenerPlot);
             plotTask.execute();
-        }
-        else if(contents.size() > 0) {
+        } else if (contents.size() > 0) {
             JOptionPane.showMessageDialog(this, "You need to choose the file to plot from the Combo Box", "No File Chosen", JOptionPane.WARNING_MESSAGE);
-        }
-        else if(contents.size() == 0) {
-            JOptionPane.showMessageDialog(this, "In order to plot, you first need to import audio to the programa", "You need to import audio first", JOptionPane.WARNING_MESSAGE);
+        } else if (contents.size() == 0) {
+            JOptionPane.showMessageDialog(this, "In order to plot, you first need to import audio to the program.", "You need to import audio first", JOptionPane.WARNING_MESSAGE);
         }
     }//GEN-LAST:event_jButtonPlotCalcActionPerformed
     /**
-     * Updates the progressMonitor
+     * Updates the progressMonitor when importing an audio file
      */
     PropertyChangeListener propertyChangeListenerImport = new PropertyChangeListener() {
 
@@ -548,6 +558,33 @@ public class mainFrame extends javax.swing.JFrame {
                 if (progressMonitor.isCanceled() || task.isDone()) {
                     if (progressMonitor.isCanceled()) {
                         task.cancel(true);
+                        System.out.println("Task canceled");
+
+                    } else {
+                        System.out.println("Task completed");
+                    }
+                    jButtonPlot.setEnabled(true);
+                }
+            }
+        }
+    };
+
+    /**
+     * Updates the progressMonitor when preparing to plot
+     */
+    PropertyChangeListener propertyChangeListenerPlot = new PropertyChangeListener() {
+
+        public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
+            if ("progress" == propertyChangeEvent.getPropertyName()) {
+                int progress = (Integer) propertyChangeEvent.getNewValue();
+                progressMonitor.setProgress(progress);
+                String message =
+                        String.format("Completed %d%%.\n", progress);
+                progressMonitor.setNote(message);
+                System.out.println("Message = " + message);
+                if (progressMonitor.isCanceled() || plotTask.isDone()) {
+                    if (progressMonitor.isCanceled()) {
+                        plotTask.cancel(true);
                         System.out.println("Task canceled");
 
                     } else {
@@ -643,9 +680,9 @@ public class mainFrame extends javax.swing.JFrame {
             AudioDecoder decoder = null;
 
             /*if (extension.equals(".mp3")) {
-                decoder = new MP3Decoder(new FileInputStream(file.getAbsolutePath()));
+            decoder = new MP3Decoder(new FileInputStream(file.getAbsolutePath()));
             } else if (extension.equals(".wav") || extension.equals(".wave")) {
-                decoder = new WaveDecoder(new FileInputStream(file.getAbsolutePath()));
+            decoder = new WaveDecoder(new FileInputStream(file.getAbsolutePath()));
             }
             setProgress(20);
             SamplesReader samplesReader = new SamplesReader(decoder, WINDOWSIZE_DEFAULT);
@@ -677,7 +714,7 @@ public class mainFrame extends javax.swing.JFrame {
 
             content.setThreshold(peaks.getThreshold());
 
-            content.setPeaks(peaks.getThreshold());
+            content.setPeaks(peaks.getPeaks());
 
             //I add the results processed from this file, to the arraylist of contents
             contents.add(content);
@@ -735,7 +772,7 @@ public class mainFrame extends javax.swing.JFrame {
     private javax.swing.JButton jButtonPlot;
     private javax.swing.JButton jButtonPlotCalc;
     private javax.swing.JComboBox jComboBox1;
-    private javax.swing.JDialog jDialog1;
+    private javax.swing.JDialog jDialogAbout;
     private javax.swing.JFileChooser jFileChooserImportAudio;
     private javax.swing.JFileChooser jFileChooserProject;
     private javax.swing.JLabel jLabel1;
