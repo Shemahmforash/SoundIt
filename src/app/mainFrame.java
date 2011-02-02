@@ -13,6 +13,8 @@ import com.icdif.audio.io.MP3Decoder;
 import com.icdif.audio.io.WaveDecoder;
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
@@ -35,7 +37,7 @@ import javax.swing.SwingWorker;
  *
  * @author wanderer
  */
-public class mainFrame extends javax.swing.JFrame {
+public class mainFrame extends javax.swing.JFrame{
 
     private ArrayList<AnalysisContent> contents = new ArrayList<AnalysisContent>();
     private final int WINDOWSIZE_DEFAULT = 1024;
@@ -92,7 +94,7 @@ public class mainFrame extends javax.swing.JFrame {
         jLabel1.setFont(new java.awt.Font("DejaVu Sans", 1, 18));
         jLabel1.setText("About SoundIT");
 
-        jLabel2.setFont(new java.awt.Font("DejaVu Sans", 0, 12)); // NOI18N
+        jLabel2.setFont(new java.awt.Font("DejaVu Sans", 0, 12));
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         jLabel2.setText("<html>SoundIT is a program built using the java programming language and intended to provide several functions related to audio.<br/> It allows one to process the text data from different Soundmeters (NA27).<br/> It also allows one to read and process data from audio files (.wav and .mp3). From this streams, it can plot the values in the time domain (amplitude vs time), but it can also find and plot onsets in the audio, by using the Fourier Transform and other processing methods in the frequency domain. <br/><br/>  More info at:<br/> http://icdif.com/computing/soundit <br/> and<br/>https://github.com/Shemahmforash/SoundIt");
         jLabel2.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -134,9 +136,14 @@ public class mainFrame extends javax.swing.JFrame {
 
         jFileChooserProject.setDialogType(javax.swing.JFileChooser.SAVE_DIALOG);
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("Beat Detector");
         setName("mainFrame"); // NOI18N
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
 
         jToolBar1.setFloatable(false);
         jToolBar1.setRollover(true);
@@ -261,7 +268,7 @@ public class mainFrame extends javax.swing.JFrame {
      * @param evt
      */
     private void jMenuItemExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemExitActionPerformed
-        System.exit(0);
+        this.formWindowClosing(null);
     }//GEN-LAST:event_jMenuItemExitActionPerformed
 
     /**
@@ -542,6 +549,21 @@ public class mainFrame extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "In order to plot, you first need to import audio to the program.", "You need to import audio first", JOptionPane.WARNING_MESSAGE);
         }
     }//GEN-LAST:event_jButtonPlotCalcActionPerformed
+
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        // TODO add your handling code here:
+         //Display confirm dialog
+        int confirmed = JOptionPane.showConfirmDialog(this,
+                "Are you sure you want to quit?", "Confirm Quit",
+                JOptionPane.YES_NO_OPTION);
+
+        //Close if user confirmed
+        if (confirmed == JOptionPane.YES_OPTION)
+        {
+                //Close frame
+                this.dispose();
+        }
+    }//GEN-LAST:event_formWindowClosing
     /**
      * Updates the progressMonitor when importing an audio file
      */
@@ -595,6 +617,8 @@ public class mainFrame extends javax.swing.JFrame {
             }
         }
     };
+
+    
 
     /**
      * This task saves the project, i.e., the arraylist Contents to a file
