@@ -70,6 +70,8 @@ public class mainFrame extends javax.swing.JFrame {
         jToolBar1 = new javax.swing.JToolBar();
         jComboBox1 = new javax.swing.JComboBox();
         jButtonPlot = new javax.swing.JButton();
+        jButtonPlotCalc = new javax.swing.JButton();
+        jToolBar2 = new javax.swing.JToolBar();
         jProgressBar1 = new javax.swing.JProgressBar();
         jMenuBarTop = new javax.swing.JMenuBar();
         jMenuFile = new javax.swing.JMenu();
@@ -136,11 +138,12 @@ public class mainFrame extends javax.swing.JFrame {
         setTitle("Beat Detector");
         setName("mainFrame"); // NOI18N
 
+        jToolBar1.setFloatable(false);
         jToolBar1.setRollover(true);
 
         jToolBar1.add(jComboBox1);
 
-        jButtonPlot.setText("Plot");
+        jButtonPlot.setText("Plot Samples");
         jButtonPlot.setFocusable(false);
         jButtonPlot.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jButtonPlot.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -150,7 +153,25 @@ public class mainFrame extends javax.swing.JFrame {
             }
         });
         jToolBar1.add(jButtonPlot);
-        jToolBar1.add(jProgressBar1);
+
+        jButtonPlotCalc.setText("Plot Calculations");
+        jButtonPlotCalc.setFocusable(false);
+        jButtonPlotCalc.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButtonPlotCalc.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButtonPlotCalc.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonPlotCalcActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(jButtonPlotCalc);
+
+        jToolBar2.setFloatable(false);
+        jToolBar2.setRollover(true);
+        jToolBar2.setFocusable(false);
+        jToolBar2.setName("BottomToolBar"); // NOI18N
+
+        jProgressBar1.setMaximumSize(new java.awt.Dimension(150, 20));
+        jToolBar2.add(jProgressBar1);
 
         jMenuFile.setText("File");
 
@@ -221,13 +242,15 @@ public class mainFrame extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jToolBar1, javax.swing.GroupLayout.DEFAULT_SIZE, 560, Short.MAX_VALUE)
+            .addComponent(jToolBar1, javax.swing.GroupLayout.DEFAULT_SIZE, 572, Short.MAX_VALUE)
+            .addComponent(jToolBar2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 572, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jToolBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(401, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 376, Short.MAX_VALUE)
+                .addComponent(jToolBar2, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         pack();
@@ -312,15 +335,15 @@ public class mainFrame extends javax.swing.JFrame {
             System.out.println("Faço save de " + file.getAbsolutePath());
 
             /*try {
-                FileOutputStream fos = new FileOutputStream(file.getAbsolutePath());
-                ObjectOutputStream oos = new ObjectOutputStream(fos);
-                oos.writeObject(contents);
+            FileOutputStream fos = new FileOutputStream(file.getAbsolutePath());
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            oos.writeObject(contents);
 
-                JOptionPane.showMessageDialog(this, "The contents of this project were saved successfully to " + file.getName());
+            JOptionPane.showMessageDialog(this, "The contents of this project were saved successfully to " + file.getName());
             } catch (FileNotFoundException e) {
-                e.printStackTrace();
+            e.printStackTrace();
             } catch (IOException e) {
-                e.printStackTrace();
+            e.printStackTrace();
             }*/
 
             SaveProjectTask saveProjectTask = new SaveProjectTask(file);
@@ -346,52 +369,71 @@ public class mainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_jButtonCloseActionPerformed
 
     /**
-     * This method plots the file selected in the combobox
+     * This method plots the samplies in the file selected in the combobox.
+     * This samples are too big to be save in the program, so they are read from the file 
      * @param evt
      */
     private void jButtonPlotActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonPlotActionPerformed
         //jButtonPlot.setEnabled(false);
 
 
-        progressMonitor = new ProgressMonitor(this,
-                "Running a Long Task",
-                "", 0, 100);
-        progressMonitor.setProgress(0);
+        if (jComboBox1.getSelectedIndex() >= 0) {
+            progressMonitor = new ProgressMonitor(this,
+                    "Running a Long Task",
+                    "", 0, 100);
+            progressMonitor.setProgress(0);
 
-        progressMonitor.setNote("Plotting");
+            progressMonitor.setNote("Plotting");
 
-        System.out.println("Invoquei o prog monitor");
+            System.out.println("Invoquei o prog monitor");
 
-        // find the selected index of the comboBox. Since the combobox ifs filled
-        // at the same order as the contents array list, the indexes are the same
-        int selectedIndex = jComboBox1.getSelectedIndex();
+            // find the selected index of the comboBox. Since the combobox is filled
+            // at the same order as the contents array list, the indexes are the same
+            int selectedIndex = jComboBox1.getSelectedIndex();
 
-        String fileName = contents.get(selectedIndex).getFile().getAbsolutePath();
+            String fileName = contents.get(selectedIndex).getFile().getAbsolutePath();
 
-        String extension = FileUtils.getExtension(fileName);
+            String extension = FileUtils.getExtension(fileName);
 
-        //System.out.println("Extension = " + extension);
+            //System.out.println("Extension = " + extension);
 
-        AudioDecoder decoder = null;
+            AudioDecoder decoder = null;
 
-        try {
-            if (extension.equals(".mp3")) {
-                decoder = new MP3Decoder(new FileInputStream(fileName));
-            } else if (extension.equals(".wav") || extension.equals(".wave")) {
-                decoder = new WaveDecoder(new FileInputStream(fileName));
+            try {
+                if (extension.equals(".mp3")) {
+                    decoder = new MP3Decoder(new FileInputStream(fileName));
+                } else if (extension.equals(".wav") || extension.equals(".wave")) {
+                    decoder = new WaveDecoder(new FileInputStream(fileName));
+                }
+            } catch (Exception e) {
             }
-        } catch (Exception e) {
+
+            //the samples are too big to be kept in the clas methods, so they are read from the file
+            ArrayList<Float> samplesFile = new ArrayList<Float>();
+
+            SamplesReader samplesReader = new SamplesReader(decoder, WINDOWSIZE_DEFAULT);
+
+            samplesFile = samplesReader.getAllSamples();
+
+            //Instances of javax.swing.SwingWorker are not reusuable, so
+            //we create new instances as needed.
+            plotTask = new PlotTask(samplesFile, "PCM DATA - " + fileName, 800, 600, WINDOWSIZE_DEFAULT, Color.RED, fileName, true);
+
+            plotTask.addPropertyChangeListener(this.propertyChangeListenerImport);
+            plotTask.execute();
+
+            //I clean the variables
+            decoder = null;
+            //samplesFile.clear();
+        }
+        else if(contents.size() > 0) {
+            JOptionPane.showMessageDialog(this, "You need to choose the file to plot from the Combo Box", "No File Chosen", JOptionPane.WARNING_MESSAGE);
+        }
+        else if(contents.size() == 0) {
+            JOptionPane.showMessageDialog(this, "In order to plot, you first need to import audio to the programa", "You need to import audio first", JOptionPane.WARNING_MESSAGE);
         }
 
-        SpectralDifference spectDiff = new SpectralDifference(decoder, WINDOWSIZE_DEFAULT,
-                HOPSIZE_DEFAULT, true, 44100);
 
-        //Instances of javax.swing.SwingWorker are not reusuable, so
-        //we create new instances as needed.
-        plotTask = new PlotTask(spectDiff.getSpectralDifference(), "Spectral Dif - " + fileName, 800, 600, 1, Color.RED, fileName, true, HOPSIZE_DEFAULT);
-
-        plotTask.addPropertyChangeListener(this.propertyChangeListenerImport);
-        plotTask.execute();
     }//GEN-LAST:event_jButtonPlotActionPerformed
 
     /**
@@ -409,31 +451,28 @@ public class mainFrame extends javax.swing.JFrame {
                 File file = jFileChooserProject.getSelectedFile();
                 if (file.exists()) {
 
+                    //this varibale keeps the response from the confirm Dialog (responses: 1,0,-1)
+                    int response = 1;
+
                     if (contents.size() > 0) {
-                        //TODO: pedir confirmação ao user e apagar o existente
-                    } else {
 
-                        /*FileInputStream fis = new FileInputStream(file.getAbsolutePath());
+                        //default icon, custom title
+                        response = JOptionPane.showConfirmDialog(
+                                this,
+                                "Do you wish to import a new project? You have an unsaved project. If you choose to import a new project, the current project will be lost.",
+                                "Confirm project opening",
+                                JOptionPane.YES_NO_OPTION);
 
-                        ObjectInputStream ois = new ObjectInputStream(fis);
-
-                        Object obj = ois.readObject();
-
-                        contents = (ArrayList<AnalysisContent>) obj;
-
-                        for (AnalysisContent content : contents) {
-                        jComboBox1.addItem(content.getFile().getName());
-                        }*/
-
-                        //I'll open a project from the file
-                        OpenProjectTask openTask = new OpenProjectTask(file);
-                        openTask.execute();
-
-
-                        
+                        System.out.println("Resposta: " + response);
 
                     }
-
+                    //if the response is yes, I clear the arraylist contents and the combo and execute the task of project opening
+                    if (response == 1) {
+                        jComboBox1.removeAllItems();
+                        contents.clear();
+                        OpenProjectTask openTask = new OpenProjectTask(file);
+                        openTask.execute();
+                    }
                 }
             }
 
@@ -441,6 +480,58 @@ public class mainFrame extends javax.swing.JFrame {
             e.printStackTrace();
         }
     }//GEN-LAST:event_jMenuItemOpenProjectActionPerformed
+
+    private void jButtonPlotCalcActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonPlotCalcActionPerformed
+        if (jComboBox1.getSelectedIndex() >= 0) {
+            progressMonitor = new ProgressMonitor(this,
+                    "Plotting",
+                    "", 0, 100);
+            progressMonitor.setProgress(0);
+
+            progressMonitor.setNote("Plotting");
+
+            System.out.println("Invoquei o prog monitor");
+
+            // find the selected index of the comboBox. Since the combobox is filled
+            // at the same order as the contents array list, the indexes are the same
+            int selectedIndex = jComboBox1.getSelectedIndex();
+
+            String fileName = contents.get(selectedIndex).getFile().getAbsolutePath();
+
+            String extension = FileUtils.getExtension(fileName);
+
+            //System.out.println("Extension = " + extension);
+
+            AudioDecoder decoder = null;
+
+            try {
+                if (extension.equals(".mp3")) {
+                    decoder = new MP3Decoder(new FileInputStream(fileName));
+                } else if (extension.equals(".wav") || extension.equals(".wave")) {
+                    decoder = new WaveDecoder(new FileInputStream(fileName));
+                }
+            } catch (Exception e) {
+            }
+
+            /*SpectralDifference spectDiff = new SpectralDifference(decoder, WINDOWSIZE_DEFAULT,
+                    HOPSIZE_DEFAULT, true, 44100);
+
+            //Instances of javax.swing.SwingWorker are not reusuable, so
+            //we create new instances as needed.
+            plotTask = new PlotTask(spectDiff.getSpectralDifference(), "Spectral Dif - " + fileName, 800, 600, 1, Color.RED, fileName, true, HOPSIZE_DEFAULT);*/
+
+
+            plotTask = new PlotTask(contents.get(selectedIndex).getSpectralFlux(), "Spectral Dif - " + fileName, 800, 600, 1, Color.RED, fileName, true, HOPSIZE_DEFAULT);
+            plotTask.addPropertyChangeListener(this.propertyChangeListenerImport);
+            plotTask.execute();
+        }
+        else if(contents.size() > 0) {
+            JOptionPane.showMessageDialog(this, "You need to choose the file to plot from the Combo Box", "No File Chosen", JOptionPane.WARNING_MESSAGE);
+        }
+        else if(contents.size() == 0) {
+            JOptionPane.showMessageDialog(this, "In order to plot, you first need to import audio to the programa", "You need to import audio first", JOptionPane.WARNING_MESSAGE);
+        }
+    }//GEN-LAST:event_jButtonPlotCalcActionPerformed
     /**
      * Updates the progressMonitor
      */
@@ -468,6 +559,9 @@ public class mainFrame extends javax.swing.JFrame {
         }
     };
 
+    /**
+     * This task saves the project, i.e., the arraylist Contents to a file
+     */
     class SaveProjectTask extends SwingWorker<Void, Void> {
 
         private File file;
@@ -478,14 +572,14 @@ public class mainFrame extends javax.swing.JFrame {
                 FileOutputStream fos = new FileOutputStream(file.getAbsolutePath());
                 ObjectOutputStream oos = new ObjectOutputStream(fos);
                 oos.writeObject(contents);
-                
+
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
-            JOptionPane.showMessageDialog(mainFrame.this, "Project imported successfully from " + file.getName());
+            JOptionPane.showMessageDialog(mainFrame.this, "Project saved successfully to " + file.getName());
 
             return null;
         }
@@ -493,9 +587,11 @@ public class mainFrame extends javax.swing.JFrame {
         public SaveProjectTask(File file) {
             this.file = file;
         }
-        
     }
 
+    /**
+     * This task is responsible for opening a project, i.e., for reading the contents of a .soundit file into an arraylist of object
+     */
     class OpenProjectTask extends SwingWorker<Void, Void> {
 
         private File file;
@@ -546,7 +642,7 @@ public class mainFrame extends javax.swing.JFrame {
 
             AudioDecoder decoder = null;
 
-            if (extension.equals(".mp3")) {
+            /*if (extension.equals(".mp3")) {
                 decoder = new MP3Decoder(new FileInputStream(file.getAbsolutePath()));
             } else if (extension.equals(".wav") || extension.equals(".wave")) {
                 decoder = new WaveDecoder(new FileInputStream(file.getAbsolutePath()));
@@ -555,9 +651,10 @@ public class mainFrame extends javax.swing.JFrame {
             SamplesReader samplesReader = new SamplesReader(decoder, WINDOWSIZE_DEFAULT);
             content.setSamples(samplesReader.getAllSamples());
             System.out.println("Samples importadas");
-            setProgress(40);
+            
+            decoder = null;*/
 
-            decoder = null;
+            setProgress(40);
             if (extension.equals(".mp3")) {
                 decoder = new MP3Decoder(new FileInputStream(file.getAbsolutePath()));
             } else if (extension.equals(".wav") || extension.equals(".wave")) {
@@ -636,6 +733,7 @@ public class mainFrame extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonClose;
     private javax.swing.JButton jButtonPlot;
+    private javax.swing.JButton jButtonPlotCalc;
     private javax.swing.JComboBox jComboBox1;
     private javax.swing.JDialog jDialog1;
     private javax.swing.JFileChooser jFileChooserImportAudio;
@@ -657,6 +755,7 @@ public class mainFrame extends javax.swing.JFrame {
     private javax.swing.JProgressBar jProgressBar1;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JToolBar jToolBar1;
+    private javax.swing.JToolBar jToolBar2;
     // End of variables declaration//GEN-END:variables
 }
 ////o hop é usado para se fazer o cálculo da spectral flux sobrepondo-se várias windows consecutivas

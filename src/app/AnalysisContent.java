@@ -17,7 +17,7 @@ public class AnalysisContent implements Serializable {
 
     private File file;
 
-    private ArrayList<Float> samples = new ArrayList<Float>();
+   /*private ArrayList<Float> samples = new ArrayList<Float>();*/
 
     private ArrayList<Float> spectralFlux = new ArrayList<Float>();
 
@@ -41,13 +41,13 @@ public class AnalysisContent implements Serializable {
         this.peaks = peaks;
     }
 
-    public ArrayList<Float> getSamples() {
+    /*public ArrayList<Float> getSamples() {
         return samples;
     }
 
     public void setSamples(ArrayList<Float> samples) {
         this.samples = samples;
-    }
+    }*/
 
     public ArrayList<Float> getSpectralFlux() {
         return spectralFlux;
