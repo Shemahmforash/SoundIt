@@ -37,7 +37,7 @@ import javax.swing.SwingWorker;
  *
  * @author wanderer
  */
-public class mainFrame extends javax.swing.JFrame{
+public class mainFrame extends javax.swing.JFrame {
 
     private ArrayList<AnalysisContent> contents = new ArrayList<AnalysisContent>();
     private final int WINDOWSIZE_DEFAULT = 1024;
@@ -73,6 +73,9 @@ public class mainFrame extends javax.swing.JFrame{
         jComboBox1 = new javax.swing.JComboBox();
         jButtonPlot = new javax.swing.JButton();
         jButtonPlotCalc = new javax.swing.JButton();
+        jCheckBoxSpectFlux = new javax.swing.JCheckBox();
+        jCheckBoxThreshold = new javax.swing.JCheckBox();
+        jCheckBoxPeaks = new javax.swing.JCheckBox();
         jToolBar2 = new javax.swing.JToolBar();
         jProgressBar1 = new javax.swing.JProgressBar();
         jMenuBarTop = new javax.swing.JMenuBar();
@@ -150,6 +153,7 @@ public class mainFrame extends javax.swing.JFrame{
 
         jToolBar1.add(jComboBox1);
 
+        jButtonPlot.setFont(new java.awt.Font("DejaVu Sans", 1, 13)); // NOI18N
         jButtonPlot.setText("Plot Samples");
         jButtonPlot.setFocusable(false);
         jButtonPlot.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -161,6 +165,7 @@ public class mainFrame extends javax.swing.JFrame{
         });
         jToolBar1.add(jButtonPlot);
 
+        jButtonPlotCalc.setFont(new java.awt.Font("DejaVu Sans", 1, 13)); // NOI18N
         jButtonPlotCalc.setText("Plot Calculations");
         jButtonPlotCalc.setFocusable(false);
         jButtonPlotCalc.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -171,6 +176,25 @@ public class mainFrame extends javax.swing.JFrame{
             }
         });
         jToolBar1.add(jButtonPlotCalc);
+
+        jCheckBoxSpectFlux.setText("Spectral Flux");
+        jCheckBoxSpectFlux.setFocusable(false);
+        jCheckBoxSpectFlux.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+        jCheckBoxSpectFlux.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jToolBar1.add(jCheckBoxSpectFlux);
+
+        jCheckBoxThreshold.setText("Threshold");
+        jCheckBoxThreshold.setFocusable(false);
+        jCheckBoxThreshold.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+        jCheckBoxThreshold.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jToolBar1.add(jCheckBoxThreshold);
+
+        jCheckBoxPeaks.setSelected(true);
+        jCheckBoxPeaks.setText("Peaks");
+        jCheckBoxPeaks.setFocusable(false);
+        jCheckBoxPeaks.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+        jCheckBoxPeaks.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jToolBar1.add(jCheckBoxPeaks);
 
         jToolBar2.setFloatable(false);
         jToolBar2.setRollover(true);
@@ -396,7 +420,7 @@ public class mainFrame extends javax.swing.JFrame{
         //jButtonPlot.setEnabled(false);
 
 
-        if (jComboBox1.getSelectedIndex() >= 0) {            
+        if (jComboBox1.getSelectedIndex() >= 0) {
 
             // find the selected index of the comboBox. Since the combobox is filled
             // at the same order as the contents array list, the indexes are the same
@@ -500,67 +524,90 @@ public class mainFrame extends javax.swing.JFrame{
     }//GEN-LAST:event_jMenuItemOpenProjectActionPerformed
 
     private void jButtonPlotCalcActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonPlotCalcActionPerformed
+
         if (jComboBox1.getSelectedIndex() >= 0) {
-            progressMonitor = new ProgressMonitor(this,
-                    "Plotting",
-                    "", 0, 100);
-            progressMonitor.setProgress(0);
 
-            progressMonitor.setNote("Plotting");
+            if (jCheckBoxPeaks.isSelected() || jCheckBoxSpectFlux.isSelected() || jCheckBoxThreshold.isSelected()) {
 
-            System.out.println("Invoquei o prog monitor");
+                progressMonitor = new ProgressMonitor(this,
+                        "Plotting",
+                        "", 0, 100);
+                progressMonitor.setProgress(0);
 
-            // find the selected index of the comboBox. Since the combobox is filled
-            // at the same order as the contents array list, the indexes are the same
-            int selectedIndex = jComboBox1.getSelectedIndex();
+                progressMonitor.setNote("Plotting");
 
-            String fileName = contents.get(selectedIndex).getFile().getAbsolutePath();
+                System.out.println("Invoquei o prog monitor");
 
-            String extension = FileUtils.getExtension(fileName);
+                // find the selected index of the comboBox. Since the combobox is filled
+                // at the same order as the contents array list, the indexes are the same
+                int selectedIndex = jComboBox1.getSelectedIndex();
 
-            //System.out.println("Extension = " + extension);
+                String fileName = contents.get(selectedIndex).getFile().getAbsolutePath();
 
-            AudioDecoder decoder = null;
+                String extension = FileUtils.getExtension(fileName);
 
-            try {
-                if (extension.equals(".mp3")) {
-                    decoder = new MP3Decoder(new FileInputStream(fileName));
-                } else if (extension.equals(".wav") || extension.equals(".wave")) {
-                    decoder = new WaveDecoder(new FileInputStream(fileName));
+                //System.out.println("Extension = " + extension);
+
+                AudioDecoder decoder = null;
+
+                try {
+                    if (extension.equals(".mp3")) {
+                        decoder = new MP3Decoder(new FileInputStream(fileName));
+                    } else if (extension.equals(".wav") || extension.equals(".wave")) {
+                        decoder = new WaveDecoder(new FileInputStream(fileName));
+                    }
+                } catch (Exception e) {
                 }
-            } catch (Exception e) {
+
+                /*SpectralDifference spectDiff = new SpectralDifference(decoder, WINDOWSIZE_DEFAULT,
+                HOPSIZE_DEFAULT, true, 44100);
+
+                //Instances of javax.swing.SwingWorker are not reusuable, so
+                //we create new instances as needed.
+                plotTask = new PlotTask(spectDiff.getSpectralDifference(), "Spectral Dif - " + fileName, 800, 600, 1, Color.RED, fileName, true, HOPSIZE_DEFAULT);*/
+
+                if (jCheckBoxPeaks.isSelected()) {
+                    //plotTask = new PlotTask(contents.get(selectedIndex).getSpectralFlux(), "Spectral Dif - " + fileName, 800, 600, 1, Color.RED, fileName, true, HOPSIZE_DEFAULT);
+                    plotTask = new PlotTask(contents.get(selectedIndex).getPeaks(), "Peaks - " + fileName, 800, 600, 1, Color.RED, fileName, true, HOPSIZE_DEFAULT);
+                }
+
+                if(jCheckBoxSpectFlux.isSelected()) {
+                    plotTask = new PlotTask(contents.get(selectedIndex).getSpectralFlux(), "Spectral Flux - " + fileName, 800, 600, 1, Color.RED, fileName, true, HOPSIZE_DEFAULT);
+                }
+
+                if(jCheckBoxThreshold.isSelected()) {
+                    plotTask = new PlotTask(contents.get(selectedIndex).getThreshold(), "Threshold - " + fileName, 800, 600, 1, Color.RED, fileName, true, HOPSIZE_DEFAULT);
+                }
+
+                plotTask.addPropertyChangeListener(this.propertyChangeListenerPlot);
+                plotTask.execute();
+
+            } else {
+                JOptionPane.showMessageDialog(this, "You need to choose, by using the checkboxes, at least one of the calculated results to be plotted.", "You must choose a parameter to plot", JOptionPane.WARNING_MESSAGE);
             }
 
-            /*SpectralDifference spectDiff = new SpectralDifference(decoder, WINDOWSIZE_DEFAULT,
-            HOPSIZE_DEFAULT, true, 44100);
-
-            //Instances of javax.swing.SwingWorker are not reusuable, so
-            //we create new instances as needed.
-            plotTask = new PlotTask(spectDiff.getSpectralDifference(), "Spectral Dif - " + fileName, 800, 600, 1, Color.RED, fileName, true, HOPSIZE_DEFAULT);*/
-
-
-            //plotTask = new PlotTask(contents.get(selectedIndex).getSpectralFlux(), "Spectral Dif - " + fileName, 800, 600, 1, Color.RED, fileName, true, HOPSIZE_DEFAULT);
-            plotTask = new PlotTask(contents.get(selectedIndex).getPeaks(), "Peaks - " + fileName, 800, 600, 1, Color.RED, fileName, true, HOPSIZE_DEFAULT);
-            plotTask.addPropertyChangeListener(this.propertyChangeListenerPlot);
-            plotTask.execute();
         } else if (contents.size() > 0) {
             JOptionPane.showMessageDialog(this, "You need to choose the file to plot from the Combo Box", "No File Chosen", JOptionPane.WARNING_MESSAGE);
         } else if (contents.size() == 0) {
             JOptionPane.showMessageDialog(this, "In order to plot, you first need to import audio to the program.", "You need to import audio first", JOptionPane.WARNING_MESSAGE);
         }
+
+
+
+
     }//GEN-LAST:event_jButtonPlotCalcActionPerformed
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
         // TODO add your handling code here:
-         //Display confirm dialog
+        //Display confirm dialog
         int confirmed = JOptionPane.showConfirmDialog(this,
                 "Are you sure you want to quit?", "Confirm Quit",
                 JOptionPane.YES_NO_OPTION);
 
         //Close if user confirmed
         if (confirmed == JOptionPane.YES_OPTION) {
-                //Close frame
-                this.dispose();
+            //Close frame
+            this.dispose();
         }
     }//GEN-LAST:event_formWindowClosing
     /**
@@ -589,7 +636,6 @@ public class mainFrame extends javax.swing.JFrame{
             }
         }
     };
-
     /**
      * Updates the progressMonitor when preparing to plot
      */
@@ -616,8 +662,6 @@ public class mainFrame extends javax.swing.JFrame{
             }
         }
     };
-
-    
 
     /**
      * This task saves the project, i.e., the arraylist Contents to a file
@@ -794,6 +838,9 @@ public class mainFrame extends javax.swing.JFrame{
     private javax.swing.JButton jButtonClose;
     private javax.swing.JButton jButtonPlot;
     private javax.swing.JButton jButtonPlotCalc;
+    private javax.swing.JCheckBox jCheckBoxPeaks;
+    private javax.swing.JCheckBox jCheckBoxSpectFlux;
+    private javax.swing.JCheckBox jCheckBoxThreshold;
     private javax.swing.JComboBox jComboBox1;
     private javax.swing.JDialog jDialogAbout;
     private javax.swing.JFileChooser jFileChooserImportAudio;
