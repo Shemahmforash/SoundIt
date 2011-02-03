@@ -470,7 +470,7 @@ public class mainFrame extends javax.swing.JFrame{
                 if (file.exists()) {
 
                     //this varibale keeps the response from the confirm Dialog (responses: 1,0,-1)
-                    int response = 1;
+                    int response = JOptionPane.YES_OPTION;
 
                     if (contents.size() > 0) {
 
@@ -481,11 +481,11 @@ public class mainFrame extends javax.swing.JFrame{
                                 "Confirm project opening",
                                 JOptionPane.YES_NO_OPTION);
 
-                        System.out.println("Resposta: " + response);
+                        //System.out.println("Resposta: " + response);
 
                     }
                     //if the response is yes, I clear the arraylist contents and the combo and execute the task of project opening
-                    if (response == 1) {
+                    if ((response == JOptionPane.YES_OPTION)) {
                         jComboBox1.removeAllItems();
                         contents.clear();
                         OpenProjectTask openTask = new OpenProjectTask(file);
@@ -558,8 +558,7 @@ public class mainFrame extends javax.swing.JFrame{
                 JOptionPane.YES_NO_OPTION);
 
         //Close if user confirmed
-        if (confirmed == JOptionPane.YES_OPTION)
-        {
+        if (confirmed == JOptionPane.YES_OPTION) {
                 //Close frame
                 this.dispose();
         }
