@@ -13,12 +13,9 @@ import com.icdif.audio.io.MP3Decoder;
 import com.icdif.audio.io.WaveDecoder;
 import java.awt.Color;
 import java.awt.Cursor;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
-import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -30,7 +27,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
-import javax.swing.ProgressMonitor;
 import javax.swing.SwingWorker;
 
 /**
@@ -43,8 +39,7 @@ public class mainFrame extends javax.swing.JFrame {
     private final int WINDOWSIZE_DEFAULT = 1024;
     private final int HOPSIZE_DEFAULT = 512;
     private PlotTask plotTask;
-    private importTask task;
-    private ProgressMonitor progressMonitor;
+    //private ImportTask importTask;
     ExtensionFileFilter filterSound = new ExtensionFileFilter("Wave and MP3", new String[]{"MP3", "WAV", "WAVE"});
     ExtensionFileFilter filterProject = new ExtensionFileFilter("SoundIt", new String[]{"SOUNDIT"});
 
@@ -77,6 +72,7 @@ public class mainFrame extends javax.swing.JFrame {
         jCheckBoxThreshold = new javax.swing.JCheckBox();
         jCheckBoxPeaks = new javax.swing.JCheckBox();
         jToolBar2 = new javax.swing.JToolBar();
+        jLabelProgress = new javax.swing.JLabel();
         jProgressBar1 = new javax.swing.JProgressBar();
         jMenuBarTop = new javax.swing.JMenuBar();
         jMenuFile = new javax.swing.JMenu();
@@ -165,7 +161,7 @@ public class mainFrame extends javax.swing.JFrame {
         });
         jToolBar1.add(jButtonPlot);
 
-        jButtonPlotCalc.setFont(new java.awt.Font("DejaVu Sans", 1, 13)); // NOI18N
+        jButtonPlotCalc.setFont(new java.awt.Font("DejaVu Sans", 1, 13));
         jButtonPlotCalc.setText("Plot Calculations");
         jButtonPlotCalc.setFocusable(false);
         jButtonPlotCalc.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -200,6 +196,7 @@ public class mainFrame extends javax.swing.JFrame {
         jToolBar2.setRollover(true);
         jToolBar2.setFocusable(false);
         jToolBar2.setName("BottomToolBar"); // NOI18N
+        jToolBar2.add(jLabelProgress);
 
         jProgressBar1.setMaximumSize(new java.awt.Dimension(150, 20));
         jToolBar2.add(jProgressBar1);
@@ -246,8 +243,18 @@ public class mainFrame extends javax.swing.JFrame {
         jMenuBarTop.add(jMenuImport);
 
         jMenuOptions.setText("Options");
+        jMenuOptions.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuOptionsActionPerformed(evt);
+            }
+        });
 
         jMenuItemConfigure.setText("Configure");
+        jMenuItemConfigure.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemConfigureActionPerformed(evt);
+            }
+        });
         jMenuOptions.add(jMenuItemConfigure);
 
         jMenuBarTop.add(jMenuOptions);
@@ -316,14 +323,16 @@ public class mainFrame extends javax.swing.JFrame {
 
                     jComboBox1.addItem(file.getName());
 
-                    progressMonitor = new ProgressMonitor(this,
-                            "Importing " + file.getName(),
-                            "", 0, 100);
-                    progressMonitor.setProgress(0);
+                    /*progressMonitor = new ProgressMonitor(this,
+                    "Importing " + file.getName(),
+                    "", 0, 100);
+                    progressMonitor.setProgress(0);*/
 
-                    task = new importTask(file);
-                    task.addPropertyChangeListener(propertyChangeListenerImport);
-                    task.execute();
+                    jLabelProgress.setText("Importing " + file.getName() + " ");
+
+                    ImportTask importTask = new ImportTask(file);
+                    importTask.addPropertyChangeListener(propertyChangeListenerImport);
+                    importTask.execute();
                 } else {
                     //System.out.println("The file " + file.getName() + " was already processed");
 
@@ -378,6 +387,8 @@ public class mainFrame extends javax.swing.JFrame {
                 e.printStackTrace();
                 }*/
 
+                jProgressBar1.setIndeterminate(true);
+                jLabelProgress.setText("Saving project to " + file.getName() + " ");
                 SaveProjectTask saveProjectTask = new SaveProjectTask(file);
                 saveProjectTask.execute();
 
@@ -419,7 +430,7 @@ public class mainFrame extends javax.swing.JFrame {
     private void jButtonPlotActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonPlotActionPerformed
         //jButtonPlot.setEnabled(false);
 
-
+        //if there is a file in the combobox
         if (jComboBox1.getSelectedIndex() >= 0) {
 
             // find the selected index of the comboBox. Since the combobox is filled
@@ -430,14 +441,14 @@ public class mainFrame extends javax.swing.JFrame {
 
             String extension = FileUtils.getExtension(fileName);
 
-            progressMonitor = new ProgressMonitor(this,
-                    "Plotting " + contents.get(selectedIndex).getFile().getName(),
-                    "", 0, 100);
+            /*progressMonitor = new ProgressMonitor(this,
+            "Plotting " + contents.get(selectedIndex).getFile().getName(),
+            "", 0, 100);
             progressMonitor.setProgress(0);
 
-            progressMonitor.setNote("Plotting");
+            progressMonitor.setNote("Plotting");*/
 
-            System.out.println("Invoquei o prog monitor");
+            jLabelProgress.setText("Plotting " + contents.get(selectedIndex).getFile().getName() + " ");
 
             //System.out.println("Extension = " + extension);
 
@@ -512,6 +523,10 @@ public class mainFrame extends javax.swing.JFrame {
                     if ((response == JOptionPane.YES_OPTION)) {
                         jComboBox1.removeAllItems();
                         contents.clear();
+
+                        jProgressBar1.setIndeterminate(true);
+                        jLabelProgress.setText("Opening project from " + file.getName() + " ");
+
                         OpenProjectTask openTask = new OpenProjectTask(file);
                         openTask.execute();
                     }
@@ -529,14 +544,14 @@ public class mainFrame extends javax.swing.JFrame {
 
             if (jCheckBoxPeaks.isSelected() || jCheckBoxSpectFlux.isSelected() || jCheckBoxThreshold.isSelected()) {
 
-                progressMonitor = new ProgressMonitor(this,
-                        "Plotting",
-                        "", 0, 100);
+                /*progressMonitor = new ProgressMonitor(this,
+                "Plotting",
+                "", 0, 100);
                 progressMonitor.setProgress(0);
 
                 progressMonitor.setNote("Plotting");
 
-                System.out.println("Invoquei o prog monitor");
+                System.out.println("Invoquei o prog monitor");*/
 
                 // find the selected index of the comboBox. Since the combobox is filled
                 // at the same order as the contents array list, the indexes are the same
@@ -571,11 +586,11 @@ public class mainFrame extends javax.swing.JFrame {
                     plotTask = new PlotTask(contents.get(selectedIndex).getPeaks(), "Peaks - " + fileName, 800, 600, 1, Color.RED, fileName, true, HOPSIZE_DEFAULT);
                 }
 
-                if(jCheckBoxSpectFlux.isSelected()) {
+                if (jCheckBoxSpectFlux.isSelected()) {
                     plotTask = new PlotTask(contents.get(selectedIndex).getSpectralFlux(), "Spectral Flux - " + fileName, 800, 600, 1, Color.RED, fileName, true, HOPSIZE_DEFAULT);
                 }
 
-                if(jCheckBoxThreshold.isSelected()) {
+                if (jCheckBoxThreshold.isSelected()) {
                     plotTask = new PlotTask(contents.get(selectedIndex).getThreshold(), "Threshold - " + fileName, 800, 600, 1, Color.RED, fileName, true, HOPSIZE_DEFAULT);
                 }
 
@@ -591,10 +606,6 @@ public class mainFrame extends javax.swing.JFrame {
         } else if (contents.size() == 0) {
             JOptionPane.showMessageDialog(this, "In order to plot, you first need to import audio to the program.", "You need to import audio first", JOptionPane.WARNING_MESSAGE);
         }
-
-
-
-
     }//GEN-LAST:event_jButtonPlotCalcActionPerformed
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
@@ -608,8 +619,53 @@ public class mainFrame extends javax.swing.JFrame {
         if (confirmed == JOptionPane.YES_OPTION) {
             //Close frame
             this.dispose();
+            System.exit(0);
         }
     }//GEN-LAST:event_formWindowClosing
+
+    private void jMenuItemConfigureActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemConfigureActionPerformed
+
+        // TODO add your handling code here:
+        System.out.println("Action Performed");
+
+        int selectedIndex = jComboBox1.getSelectedIndex();
+        ContentsToPlot content = new ContentsToPlot(contents.get(selectedIndex).getPeaks());
+        ArrayList<ContentsToPlot> plotContents = new ArrayList<ContentsToPlot>();
+
+        plotContents.add(content);
+
+        AudioDecoder decoder = null;
+
+        String extension = FileUtils.getExtension(contents.get(selectedIndex).getFile().getName());
+
+        System.out.println("Extension = " + extension);
+
+        if (extension.equals(".mp3")) {
+            try {
+                decoder = new MP3Decoder(new FileInputStream(contents.get(selectedIndex).getFile().getAbsolutePath()));
+
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(PlotThread.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (Exception ex) {
+                Logger.getLogger(PlotThread.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } else if (extension.equals(".wav") || extension.equals(".wave")) {
+            try {
+                decoder = new WaveDecoder(new FileInputStream(contents.get(selectedIndex).getFile().getAbsolutePath()));
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(PlotThread.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (Exception ex) {
+                Logger.getLogger(PlotThread.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+        Grafico graf = new Grafico("titulo", 800, 600, 1, plotContents, decoder, true);
+        graf.run();
+
+    }//GEN-LAST:event_jMenuItemConfigureActionPerformed
+
+    private void jMenuOptionsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuOptionsActionPerformed
+    }//GEN-LAST:event_jMenuOptionsActionPerformed
     /**
      * Updates the progressMonitor when importing an audio file
      */
@@ -618,21 +674,35 @@ public class mainFrame extends javax.swing.JFrame {
         public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
             if ("progress" == propertyChangeEvent.getPropertyName()) {
                 int progress = (Integer) propertyChangeEvent.getNewValue();
-                progressMonitor.setProgress(progress);
-                String message =
-                        String.format("Completed %d%%.\n", progress);
-                progressMonitor.setNote(message);
-                System.out.println("Message = " + message);
-                if (progressMonitor.isCanceled() || task.isDone()) {
-                    if (progressMonitor.isCanceled()) {
-                        task.cancel(true);
-                        System.out.println("Task canceled");
 
-                    } else {
-                        System.out.println("Task completed");
-                    }
-                    jButtonPlot.setEnabled(true);
+
+                /*progressMonitor.setProgress(progress);
+                String message =
+                String.format("Completed %d%%.\n", progress);
+                progressMonitor.setNote(message);
+                //JOptionPane.showMessageDialog(message);
+                //JOptionPane.showMessageDialog(mainFrame.this, message);
+                
+                System.out.println("Message Import = " + message);*/
+                /*if (progressMonitor.isCanceled() || task.isDone()) {
+                if (progressMonitor.isCanceled()) {
+                task.cancel(true);
+                System.out.println("Task canceled");
+
+                } else {
+                System.out.println("Task completed");
                 }
+                jButtonPlot.setEnabled(true);
+                }*/
+
+                jProgressBar1.setIndeterminate(true);
+                //jProgressBar1.setValue(progress);
+
+                //meto a task a null
+                /*if (importTask.isDone()) {
+                //importTask = null;
+                //System.out.println("Limpo a task");
+                }*/
             }
         }
     };
@@ -644,27 +714,28 @@ public class mainFrame extends javax.swing.JFrame {
         public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
             if ("progress" == propertyChangeEvent.getPropertyName()) {
                 int progress = (Integer) propertyChangeEvent.getNewValue();
-                progressMonitor.setProgress(progress);
+                /*progressMonitor.setProgress(progress);
                 String message =
-                        String.format("Completed %d%%.\n", progress);
+                String.format("Completed %d%%.\n", progress);
                 progressMonitor.setNote(message);
-                System.out.println("Message = " + message);
-                if (progressMonitor.isCanceled() || plotTask.isDone()) {
-                    if (progressMonitor.isCanceled()) {
-                        plotTask.cancel(true);
-                        System.out.println("Task canceled");
+                System.out.println("Message = " + message);*/
 
-                    } else {
-                        System.out.println("Task completed");
-                    }
-                    jButtonPlot.setEnabled(true);
-                }
+                jProgressBar1.setIndeterminate(true);
+
+
+            }
+            if (plotTask.isDone()) {
+                System.out.println("Task completed");
+                jButtonPlot.setEnabled(true);
+                jProgressBar1.setIndeterminate(false);
+                jProgressBar1.setValue(0);
+                plotTask = null;
             }
         }
     };
 
     /**
-     * This task saves the project, i.e., the arraylist Contents to a file
+     * This task saves the project, i.e., the arraylist Contents, to a file
      */
     class SaveProjectTask extends SwingWorker<Void, Void> {
 
@@ -686,6 +757,19 @@ public class mainFrame extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(mainFrame.this, "Project saved successfully to " + file.getName());
 
             return null;
+        }
+
+        @Override
+        protected void done() {
+            super.done();
+
+            jProgressBar1.setIndeterminate(false);
+            jProgressBar1.setValue(100);
+
+            JOptionPane.showMessageDialog(mainFrame.this, "Project saved successfully to " + file.getName());
+
+            jProgressBar1.setValue(0);
+            jLabelProgress.setText("");
         }
 
         public SaveProjectTask(File file) {
@@ -718,16 +802,29 @@ public class mainFrame extends javax.swing.JFrame {
                 jComboBox1.addItem(content.getFile().getName());
             }
 
+            return null;
+        }
+
+        @Override
+        protected void done() {
+            super.done();
+
+            jProgressBar1.setIndeterminate(false);
+            jProgressBar1.setValue(100);
+
+
             JOptionPane.showMessageDialog(mainFrame.this, "Project imported successfully from " + file.getName());
 
-            return null;
+            jProgressBar1.setValue(0);
+            jLabelProgress.setText("");
+
         }
     }
 
     /**
      * This task is responsible for importing the data from an audio file into the attributes of an object
      */
-    class importTask extends SwingWorker<Void, Void> {
+    class ImportTask extends SwingWorker<Void, Void> {
 
         private File file;
         private AnalysisContent content = new AnalysisContent();
@@ -789,20 +886,38 @@ public class mainFrame extends javax.swing.JFrame {
             System.out.println("tudo adicionado");
 
             setProgress(100);
+
+            //I clean the task variables:
+            spectDiff = null;
+            peaks = null;
+
+
             return null;
         }
 
-        public importTask(File file) {
+        public ImportTask(File file) {
             this.file = file;
         }
 
         @Override
         protected void done() {
             super.done();
-            progressMonitor.setProgress(0);
-            progressMonitor.close();
+            /*progressMonitor.setProgress(0);
+            progressMonitor.close();*/
+
+            jProgressBar1.setIndeterminate(false);
+            jProgressBar1.setValue(100);
 
             jComboBox1.setSelectedItem(content.getFile().getName());
+
+            JOptionPane.showMessageDialog(mainFrame.this, "Audio imported successfully from " + file.getName());
+
+            jProgressBar1.setValue(0);
+            jLabelProgress.setText("");
+
+            //clean the variables
+            this.file = null;
+            this.content = null;
         }
     }
 
@@ -847,6 +962,7 @@ public class mainFrame extends javax.swing.JFrame {
     private javax.swing.JFileChooser jFileChooserProject;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabelProgress;
     private javax.swing.JMenuBar jMenuBarTop;
     private javax.swing.JMenu jMenuFile;
     private javax.swing.JMenu jMenuHelp;

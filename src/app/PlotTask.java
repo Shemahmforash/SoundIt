@@ -1,10 +1,5 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package app;
 
-import com.icdif.audio.graph.PlaybackPlot;
 import com.icdif.audio.graph.Plot;
 import com.icdif.audio.io.AudioDecoder;
 import com.icdif.audio.io.MP3Decoder;
@@ -111,9 +106,11 @@ public class PlotTask extends SwingWorker<Void, Void> {
         //Initialize progress property.
         setProgress(0);
 
-        setProgress(50);
+        
 
         Plot plot = new Plot(title, width, height);
+
+        setProgress(30);
 
         //System.out.println("Hop: " + this.hopSize);
 
@@ -125,6 +122,7 @@ public class PlotTask extends SwingWorker<Void, Void> {
         else {
             plot.plot(samples, 1, color);
         }
+
 
         setProgress(100);
 
@@ -181,7 +179,7 @@ public class PlotTask extends SwingWorker<Void, Void> {
     protected void done() {
         super.done();
 
-        System.out.println("Done");
+        System.out.println("PlotTask is done");
         
     }
 
