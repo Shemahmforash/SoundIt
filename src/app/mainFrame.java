@@ -40,9 +40,11 @@ public class mainFrame extends javax.swing.JFrame {
 
     private ArrayList<AnalysisContent> contents = new ArrayList<AnalysisContent>();
     private final int WINDOWSIZE_DEFAULT = 1024;
-    private final int HOPSIZE_DEFAULT = 512;
+    private final int HOPSIZE_DEFAULT = 1024;
     private final float MULTIPLIER_DEFAULT = 1.6f;
     private final int THRESHOLD_WINDOW_DEFAULT = 10;
+    private final boolean PLAYONPLOT_DEFAULT = true;
+    
     //private PlotTask plotTask;
     //private ImportTask importTask;
     ExtensionFileFilter filterSound = new ExtensionFileFilter("Wave and MP3", new String[]{"MP3", "WAV", "WAVE"});
@@ -59,9 +61,9 @@ public class mainFrame extends javax.swing.JFrame {
         prefs = Preferences.userRoot().node(this.getClass().getName());
         //sets the default preferences
         try {
-            setPreferences();
+            setDefaultPreferences();
         } catch (BackingStoreException ex) {
-            Logger.getLogger(mainFrame.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(this, "Warning! Cannot set preferences!");
         }
 
         initComponents();
@@ -93,6 +95,8 @@ public class mainFrame extends javax.swing.JFrame {
         jTextFieldHopSize = new javax.swing.JTextField();
         jLabelThresholdWindow = new javax.swing.JLabel();
         jTextFieldThresholdWindow = new javax.swing.JTextField();
+        jLabelPlayOnPlot = new javax.swing.JLabel();
+        jComboBoxPlayOnPlot = new javax.swing.JComboBox();
         jPanel2 = new javax.swing.JPanel();
         jLabelMultiplier1 = new javax.swing.JLabel();
         jLabelSamplesPerPixel1 = new javax.swing.JLabel();
@@ -184,6 +188,10 @@ public class mainFrame extends javax.swing.JFrame {
 
         jLabelThresholdWindow.setText("Threshold Window");
 
+        jLabelPlayOnPlot.setText("Play on Plot");
+
+        jComboBoxPlayOnPlot.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "true", "false" }));
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -193,15 +201,21 @@ public class mainFrame extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabelMultiplier)
                     .addComponent(jLabelSamplesPerPixel)
-                    .addComponent(jLabelHopSize)
-                    .addComponent(jLabelThresholdWindow))
+                    .addComponent(jLabelHopSize))
                 .addGap(28, 28, 28)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jTextFieldThresholdWindow)
                     .addComponent(jTextFieldHopSize)
                     .addComponent(jTextFieldMultiplier)
                     .addComponent(jTextFieldSamplesPerPixel, javax.swing.GroupLayout.DEFAULT_SIZE, 60, Short.MAX_VALUE))
-                .addContainerGap(99, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabelThresholdWindow)
+                    .addComponent(jLabelPlayOnPlot))
+                .addGap(28, 28, 28)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jComboBoxPlayOnPlot, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jTextFieldThresholdWindow, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(33, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -209,20 +223,20 @@ public class mainFrame extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabelMultiplier)
-                    .addComponent(jTextFieldMultiplier, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jTextFieldMultiplier, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jTextFieldThresholdWindow, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabelThresholdWindow))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabelSamplesPerPixel)
-                    .addComponent(jTextFieldSamplesPerPixel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jTextFieldSamplesPerPixel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabelPlayOnPlot)
+                    .addComponent(jComboBoxPlayOnPlot, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(13, 13, 13)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jTextFieldHopSize, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabelHopSize))
-                .addGap(13, 13, 13)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextFieldThresholdWindow, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabelThresholdWindow))
-                .addContainerGap(17, Short.MAX_VALUE))
+                .addContainerGap(73, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Parameters", jPanel1);
@@ -246,7 +260,7 @@ public class mainFrame extends javax.swing.JFrame {
                     .addComponent(jLabelSamplesPerPixel1)
                     .addComponent(jLabelHopSize1)
                     .addComponent(jLabelHopSize2))
-                .addContainerGap(219, Short.MAX_VALUE))
+                .addContainerGap(379, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -259,7 +273,7 @@ public class mainFrame extends javax.swing.JFrame {
                 .addComponent(jLabelHopSize1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabelHopSize2)
-                .addContainerGap(52, Short.MAX_VALUE))
+                .addContainerGap(68, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Colors", jPanel2);
@@ -268,11 +282,11 @@ public class mainFrame extends javax.swing.JFrame {
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 313, Short.MAX_VALUE)
+            .addGap(0, 473, Short.MAX_VALUE)
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 175, Short.MAX_VALUE)
+            .addGap(0, 191, Short.MAX_VALUE)
         );
 
         jTabbedPane1.addTab("Other", jPanel3);
@@ -305,7 +319,7 @@ public class mainFrame extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jDialogConfigureLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jDialogConfigureLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 325, Short.MAX_VALUE)
+                    .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 485, Short.MAX_VALUE)
                     .addGroup(jDialogConfigureLayout.createSequentialGroup()
                         .addComponent(jButtonConfigOk)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -318,7 +332,7 @@ public class mainFrame extends javax.swing.JFrame {
             jDialogConfigureLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jDialogConfigureLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 218, Short.MAX_VALUE)
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 234, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
                 .addGroup(jDialogConfigureLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButtonConfigCancel)
@@ -664,50 +678,12 @@ public class mainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_formWindowClosing
 
     private void jMenuItemConfigureActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemConfigureActionPerformed
-
-        /*
-        System.out.println("Action Performed");
-
-        int selectedIndex = jComboBox1.getSelectedIndex();
-        ContentsToPlot content = new ContentsToPlot(contents.get(selectedIndex).getPeaks());
-        ArrayList<ContentsToPlot> plotContents = new ArrayList<ContentsToPlot>();
-
-        plotContents.add(content);
-
-        AudioDecoder decoder = null;
-
-        String extension = FileUtils.getExtension(contents.get(selectedIndex).getFile().getName());
-
-        System.out.println("Extension = " + extension);
-
-        if (extension.equals(".mp3")) {
-        try {
-        decoder = new MP3Decoder(new FileInputStream(contents.get(selectedIndex).getFile().getAbsolutePath()));
-
-        } catch (FileNotFoundException ex) {
-        Logger.getLogger(PlotThread.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (Exception ex) {
-        Logger.getLogger(PlotThread.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        } else if (extension.equals(".wav") || extension.equals(".wave")) {
-        try {
-        decoder = new WaveDecoder(new FileInputStream(contents.get(selectedIndex).getFile().getAbsolutePath()));
-        } catch (FileNotFoundException ex) {
-        Logger.getLogger(PlotThread.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (Exception ex) {
-        Logger.getLogger(PlotThread.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        }
-
-        Grafico graf = new Grafico("titulo", 800, 600, 1, plotContents, decoder, true);
-        graf.run();*/
-
-        jDialogConfigure.setBounds(0, 0, 400, 270);
+     
+        jDialogConfigure.setBounds(0, 0, 520, 270);
         jDialogConfigure.setVisible(true);
 
         //I fill the text boxes of the configure dialog with the values saved in the preferences
         fillsConfigureDialogValues();
-
 
     }//GEN-LAST:event_jMenuItemConfigureActionPerformed
 
@@ -804,7 +780,7 @@ public class mainFrame extends javax.swing.JFrame {
 
                 //System.out.println("Peaks.size = " + peaks.isEmpty() + " ; flux.size = " + spectralFlux.isEmpty() + " ; threshold.size = " + threshold.isEmpty());
 
-                PlottingCalcTask plottingCalcTask = new PlottingCalcTask(spectralFlux, threshold, peaks, "Calculations", 800, 600, WINDOWSIZE_DEFAULT, HOPSIZE_DEFAULT, true, fileName);
+                PlottingCalcTask plottingCalcTask = new PlottingCalcTask(spectralFlux, threshold, peaks, "Calculations", 800, 600, WINDOWSIZE_DEFAULT, HOPSIZE_DEFAULT, prefs.getBoolean("PLAYONPLOT", PLAYONPLOT_DEFAULT), fileName);
 
                 plottingCalcTask.addPropertyChangeListener(propertyChangeListenerPlot);
 
@@ -877,7 +853,7 @@ public class mainFrame extends javax.swing.JFrame {
             plotTask.addPropertyChangeListener(this.propertyChangeListenerPlot);
             plotTask.execute();*/
 
-            PlottingSamplesTask plottingSamplesTask = new PlottingSamplesTask(samplesFromFile, "PCM DATA - " + fileName, 800, 600, WINDOWSIZE_DEFAULT, true, fileName);
+            PlottingSamplesTask plottingSamplesTask = new PlottingSamplesTask(samplesFromFile, "PCM DATA - " + fileName, 800, 600, WINDOWSIZE_DEFAULT, prefs.getBoolean("PLAYONPLOT", PLAYONPLOT_DEFAULT), fileName);
             plottingSamplesTask.addPropertyChangeListener(propertyChangeListenerPlot);
             plottingSamplesTask.execute();
 
@@ -903,6 +879,7 @@ public class mainFrame extends javax.swing.JFrame {
 
     private void jButtonConfigDefaultActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonConfigDefaultActionPerformed
         restoreDefaultPreferences();
+        fillsConfigureDialogValues();
     }//GEN-LAST:event_jButtonConfigDefaultActionPerformed
     /**
      * Updates the progressMonitor when importing an audio file
@@ -910,10 +887,8 @@ public class mainFrame extends javax.swing.JFrame {
     PropertyChangeListener propertyChangeListenerImport = new PropertyChangeListener() {
 
         public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
-            if ("progress" == propertyChangeEvent.getPropertyName()) {
-
+            if ("progress".equals(propertyChangeEvent.getPropertyName())) {
                 jProgressBarTasks.setIndeterminate(true);
-
             }
         }
     };
@@ -923,12 +898,8 @@ public class mainFrame extends javax.swing.JFrame {
     PropertyChangeListener propertyChangeListenerPlot = new PropertyChangeListener() {
 
         public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
-            if ("progress" == propertyChangeEvent.getPropertyName()) {
-
-
+            if ("progress".equals(propertyChangeEvent.getPropertyName())) {
                 jProgressBarTasks.setIndeterminate(true);
-
-
             }
         }
     };
@@ -1386,6 +1357,7 @@ public class mainFrame extends javax.swing.JFrame {
         jTextFieldSamplesPerPixel.setText(Integer.toString(prefs.getInt("WINDOWSIZE", WINDOWSIZE_DEFAULT)));
         jTextFieldMultiplier.setText(Float.toString(prefs.getFloat("MULTIPLIER", MULTIPLIER_DEFAULT)));
         jTextFieldThresholdWindow.setText(Integer.toString(prefs.getInt("THRESHOLDWINDOW", THRESHOLD_WINDOW_DEFAULT)));
+        jComboBoxPlayOnPlot.setSelectedItem(Boolean.toString(prefs.getBoolean("PLAYONPLOT", PLAYONPLOT_DEFAULT)));
     }
 
     /**
@@ -1396,6 +1368,8 @@ public class mainFrame extends javax.swing.JFrame {
         prefs.putInt("HOPSIZE", Integer.parseInt(jTextFieldHopSize.getText()));
         prefs.putFloat("MULTIPLIER", Float.parseFloat(jTextFieldMultiplier.getText()));
         prefs.putInt("THRESHOLDWINDOW", Integer.parseInt(jTextFieldThresholdWindow.getText()));
+        System.out.println("PLAYONPLOT " + Boolean.parseBoolean(jComboBoxPlayOnPlot.getSelectedItem().toString()));
+        prefs.putBoolean("PLAYONPLOT", Boolean.parseBoolean(jComboBoxPlayOnPlot.getSelectedItem().toString()));
     }
 
     /**
@@ -1406,13 +1380,15 @@ public class mainFrame extends javax.swing.JFrame {
         prefs.putInt("HOPSIZE", HOPSIZE_DEFAULT);
         prefs.putFloat("MULTIPLIER", MULTIPLIER_DEFAULT);
         prefs.putInt("THRESHOLDWINDOW", THRESHOLD_WINDOW_DEFAULT);
+        prefs.putBoolean("PLAYONPLOT", PLAYONPLOT_DEFAULT);
         fillsConfigureDialogValues();
     }
 
     /**
-     * Sets the default preferences, when it runs for the first time
+     * Sets the default preferences
+     * It only sets if the preference doens't already exist, i.e., on the first time the program is runned
      */
-    private void setPreferences() throws BackingStoreException {
+    private void setDefaultPreferences() throws BackingStoreException {
 
         if (!arrayContainsString(prefs.keys(), "WINDOWSIZE")) {
             prefs.putInt("WINDOWSIZE", WINDOWSIZE_DEFAULT);
@@ -1426,6 +1402,9 @@ public class mainFrame extends javax.swing.JFrame {
         if (!arrayContainsString(prefs.keys(), "THRESHOLDWINDOW")) {
             prefs.putInt("THRESHOLDWINDOW", THRESHOLD_WINDOW_DEFAULT);
         }
+        if (!arrayContainsString(prefs.keys(), "PLAYONPLOT")) {
+            prefs.putBoolean("PLAYONPLOT", PLAYONPLOT_DEFAULT);
+        }        
     }
 
     /**
@@ -1465,6 +1444,7 @@ public class mainFrame extends javax.swing.JFrame {
     private javax.swing.JCheckBox jCheckBoxSpectFlux;
     private javax.swing.JCheckBox jCheckBoxThreshold;
     private javax.swing.JComboBox jComboBoxFiles;
+    private javax.swing.JComboBox jComboBoxPlayOnPlot;
     private javax.swing.JDialog jDialogAbout;
     private javax.swing.JDialog jDialogConfigure;
     private javax.swing.JFileChooser jFileChooserImportAudio;
@@ -1476,6 +1456,7 @@ public class mainFrame extends javax.swing.JFrame {
     private javax.swing.JLabel jLabelHopSize2;
     private javax.swing.JLabel jLabelMultiplier;
     private javax.swing.JLabel jLabelMultiplier1;
+    private javax.swing.JLabel jLabelPlayOnPlot;
     private javax.swing.JLabel jLabelProgress;
     private javax.swing.JLabel jLabelSamplesPerPixel;
     private javax.swing.JLabel jLabelSamplesPerPixel1;
