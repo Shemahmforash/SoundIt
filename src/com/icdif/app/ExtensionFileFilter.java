@@ -56,7 +56,7 @@ public class ExtensionFileFilter extends FileFilter {
 	 *            an array containing the paths of the files
 	 */
 	private void toLower(String array[]) {
-		for (int i = 0, n = array.length; i < n; i++) {
+		for(int i = 0; i < array.length; i++) {
 			array[i] = array[i].toLowerCase();
 		}
 	}
