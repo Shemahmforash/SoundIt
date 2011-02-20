@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="lib" path="lib/AudioFramework-old-old-old.jar"/>
+	<classpathentry kind="lib" path="lib/AudioFramework-old-old.jar"/>
+	<classpathentry kind="lib" path="lib/AudioFramework-old.jar"/>
+	<classpathentry kind="lib" path="lib/AudioFramework-ref2011-02-13.jar"/>
+	<classpathentry kind="lib" path="lib/AudioFramework.jar"/>
+	<classpathentry kind="lib" path="lib/jl1.0.jar"/>
+	<classpathentry kind="lib" path="lib/jlayer-1.0.1.jar"/>
+	<classpathentry kind="lib" path="lib/mp3spi1.9.4.jar"/>
+	<classpathentry kind="lib" path="lib/tritonus_aos.jar"/>
+	<classpathentry kind="lib" path="lib/tritonus_share.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

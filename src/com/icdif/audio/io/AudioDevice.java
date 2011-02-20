@@ -69,6 +69,7 @@ public class AudioDevice {
 	 */
 	private void fillBuffer(final float[] samples) {
 		for (int i = 0, j = 0; i < samples.length; i++, j += 2) {
+			//converts a normalized float into a short
 			short value = (short) (samples[i] * Short.MAX_VALUE);
 
 			/*
