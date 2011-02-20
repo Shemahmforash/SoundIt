@@ -13,7 +13,7 @@ import java.util.ArrayList;
 public class AnalysisContent implements Serializable {
 
 	/**
-	 * Generetad serial version
+	 * Generated serial version
 	 */
 	private static final long serialVersionUID = 2726033402747625365L;
 
@@ -24,10 +24,19 @@ public class AnalysisContent implements Serializable {
 
 	/* private ArrayList<Float> samples = new ArrayList<Float>(); */
 
+	/**
+	 * The Spectral Flux (Spectral Difference)
+	 */
 	private ArrayList<Float> spectralFlux = new ArrayList<Float>();
 
+	/**
+	 * The Threshold
+	 */
 	private ArrayList<Float> threshold = new ArrayList<Float>();
 
+	/**
+	 * The Peaks (onsets)
+	 */
 	private ArrayList<Float> peaks = new ArrayList<Float>();
 
 	/**

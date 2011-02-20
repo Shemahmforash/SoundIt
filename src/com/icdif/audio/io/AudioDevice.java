@@ -95,7 +95,6 @@ public class AudioDevice {
 	 * By using the stop method of the Line, it can pause the playing (it can be resumed later)
 	 */
 	public void pausePlaying() {
-		//com o stop, dá pra fazer resume
 		try {
 			if(soundLine.isRunning()) {
 				soundLine.stop();
