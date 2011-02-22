@@ -9,7 +9,7 @@ import java.io.InputStream;
 /**
  * This class implements the AudioDecoder Interface and is responsible for
  * decoding the audio data from a wave file, i.e. transforming the bytes in pcm
- * format to arrays of float that we can easily analyse and plot.
+ * format to arrays of float that we can easily analyze and plot.
  * 
  * @author wanderer
  * 
