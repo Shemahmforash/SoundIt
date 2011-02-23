@@ -688,7 +688,7 @@ public class Plot {
 
 		if (drawMin) {
 			// draws the min
-			// TODO: o sítio da recta ainda n está certo. Está como h/3, mas n
+			// TODO: o sítio da recta ainda n está certo. Está como h/2, mas n
 			// eh bem isto
 			float minScaled = calculateScaledValue(buffImage, min, 0);
 			graph.drawLine(0, (int) minScaled + buffImage.getHeight() / 2,

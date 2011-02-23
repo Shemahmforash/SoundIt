@@ -1308,8 +1308,8 @@ public class mainFrame extends javax.swing.JFrame {
 			jProgressBarTasks.setIndeterminate(false);
 			jProgressBarTasks.setValue(100);
 
-			JOptionPane.showMessageDialog(mainFrame.this,
-					"Project saved successfully to " + file.getName());
+			/*JOptionPane.showMessageDialog(mainFrame.this,
+					"Project saved successfully to " + file.getName());*/
 
 			jProgressBarTasks.setValue(0);
 			jLabelProgress.setText("");

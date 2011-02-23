@@ -20,7 +20,7 @@ public class AudioDevice {
 	private final int BUFFER_SIZE = 1024;
 
 	/**
-	 * the java sound line
+	 * the java sound line, where to send data to play
 	 */
 	private final SourceDataLine soundLine;
 
@@ -36,7 +36,7 @@ public class AudioDevice {
 	 *             when the audio is not available
 	 */
 	public AudioDevice() throws LineUnavailableException {
-		
+
 		AudioFormat format = getAudioFormat();
 
 		soundLine = AudioSystem.getSourceDataLine(format);
@@ -69,7 +69,7 @@ public class AudioDevice {
 	 */
 	private void fillBuffer(final float[] samples) {
 		for (int i = 0, j = 0; i < samples.length; i++, j += 2) {
-			//converts a normalized float into a short
+			// converts a normalized float into a short
 			short value = (short) (samples[i] * Short.MAX_VALUE);
 
 			/*
@@ -90,35 +90,36 @@ public class AudioDevice {
 			// byteBuffer[j + 1] = (byte) (value >>> 8);
 		}
 	}
-	
+
 	/**
-	 * By using the stop method of the Line, it can pause the playing (it can be resumed later)
+	 * By using the stop method of the Line, it can pause the playing (it can be
+	 * resumed later)
 	 */
 	public void pausePlaying() {
 		try {
-			if(soundLine.isRunning()) {
+			if (soundLine.isRunning()) {
 				soundLine.stop();
 			}
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 	}
-	
+
 	/**
 	 * By using the start method of the line, it can resume playing
 	 */
 	public void resumePlaying() {
 		try {
-			if(!soundLine.isRunning()) {
+			if (!soundLine.isRunning()) {
 				soundLine.start();
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * Stops playing, flushes and closes the line
 	 */
@@ -126,24 +127,26 @@ public class AudioDevice {
 		try {
 			soundLine.stop();
 			soundLine.flush();
-			//soundLine.drain();
+			// soundLine.drain();
 			soundLine.close();
 		} catch (Exception e) {
-			System.out.println("It's not possible to stop the audio because: " + e.getMessage());
+			System.out.println("It's not possible to stop the audio because: "
+					+ e.getMessage());
 		}
 	}
-	
+
 	/**
 	 * Defines the audio format
+	 * 
 	 * @return the audio format
 	 */
 	private AudioFormat getAudioFormat() {
-		
+
 		// TODO: Adicionar mais formatos de audio
-		
-		return new AudioFormat(Encoding.PCM_SIGNED, 44100, 16, 1,
-				2, 44100, false);
-		
+
+		return new AudioFormat(Encoding.PCM_SIGNED, 44100, 16, 1, 2, 44100,
+				false);
+
 	}
 
 }
