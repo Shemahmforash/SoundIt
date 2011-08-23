@@ -4,6 +4,7 @@
 package com.icdif.audio.analysis;
 
 import java.util.ArrayList;
+import java.io.*;
 
 /**
  * This class receives the SpectralDifference and calculates the Peaks. In order
@@ -51,6 +52,12 @@ public class PeakDetector {
 	private ArrayList<Float> peaks = new ArrayList<Float>();
 
 	/**
+	 * This array contains the onsets as time instants. I.e. the instants in
+	 * seconds at which the onsets occur
+	 */
+	private ArrayList<Double> onsets = new ArrayList<Double>();
+
+	/**
 	 * Instantiates the class by passing the spectral Flux that'll be used to
 	 * calculate the threshold
 	 * 
@@ -91,8 +98,8 @@ public class PeakDetector {
 
 			// the same here, it ends at the last value, or at the current value
 			// + THRESHOLD_WINDOW_SIZE
-			int end = Math.min(spectralFlux.size() - 1, i
-					+ thresholdWindowSize);
+			int end = Math
+					.min(spectralFlux.size() - 1, i + thresholdWindowSize);
 
 			// we calculate the mean and multiply it by the factor
 			float mean = 0;
@@ -112,8 +119,8 @@ public class PeakDetector {
 	private void calcFilteredSpectralFlux() {
 		for (int i = 0; i < threshold.size(); i++) {
 			if (threshold.get(i) <= spectralFlux.get(i))
-				filteredSpectralFlux.add(spectralFlux.get(i)
-						- threshold.get(i));
+				filteredSpectralFlux
+						.add(spectralFlux.get(i) - threshold.get(i));
 			else
 				filteredSpectralFlux.add((float) 0);
 		}
@@ -147,6 +154,50 @@ public class PeakDetector {
 			else
 				peaks.add((float) 0);
 		}
+	}
+	
+	/**
+	 * Gets an array containing the time instants (in seconds) of every onset
+	 * @param spectralWindowSize the size of the spectral window, i.e., the hopsize
+	 * @param sampleRate the sample rate of the signal
+	 * @return the time instances of every onset
+	 */
+	public ArrayList<Double> getPeaksAsInstantsInTime(
+			final int spectralWindowSize, final int sampleRate) {
+
+		for (int i = 0; i < this.peaks.size(); i++) {
+			if (this.getPeaks().get(i) > 0) {
+				
+				this.onsets
+						.add((double) (i *  (double) spectralWindowSize / ((double) sampleRate/* * 2 */)));
+			}
+
+			// System.out.println("onset(" + i + ") = " + (double)(i *
+			// 1024.0/44100.0));
+		}
+
+		return this.onsets;
+
+	}
+
+	/**
+	 * Prints the time instants onsets to a file
+	 * @param filename
+	 */
+	public void printOnsetsToFile(final String filename) {
+		try {
+			FileWriter outFile = new FileWriter(filename);
+			PrintWriter out = new PrintWriter(outFile);
+
+			for (int i = 0; i < this.onsets.size(); i++) {
+				out.println(onsets.get(i));
+			}
+			
+			out.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 	}
 
 	/**
