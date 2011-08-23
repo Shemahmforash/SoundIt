@@ -1,4 +1,4 @@
-This is a program buit in the Java programming language that is divided in two parts.
+This is a program built in the Java programming language that is divided in two parts.
 
 The first part is an Audio Framework available in the folder /src/com/icdif/audio that is able to read and play mp3/wave files and can process the raw data from this files into a human readable form. Using this human readable format, it can also apply some mathematical analysis in order to detect the beats (onsets).
 Besides this, the framework can also plot the audio data as well as the processed data.
